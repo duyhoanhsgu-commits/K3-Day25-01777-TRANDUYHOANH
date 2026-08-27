@@ -1,19 +1,22 @@
+PYTHON := $(shell if [ -f .venv/bin/python ]; then echo .venv/bin/python; else echo python3; fi)
+PYTEST := $(shell if [ -f .venv/bin/pytest ]; then echo .venv/bin/pytest; else echo pytest; fi)
+
 .PHONY: test lint typecheck run-chaos report clean docker-up docker-down
 
 test:
-	pytest -q
+	$(PYTEST) -q
 
 lint:
-	ruff check src tests scripts
+	$(PYTHON) -m ruff check src tests scripts
 
 typecheck:
-	mypy src
+	$(PYTHON) -m mypy src
 
 run-chaos:
-	python scripts/run_chaos.py --config configs/default.yaml --out reports/metrics.json
+	$(PYTHON) scripts/run_chaos.py --config configs/default.yaml --out reports/metrics.json
 
 report:
-	python scripts/generate_report.py --metrics reports/metrics.json --out reports/final_report.md
+	$(PYTHON) scripts/generate_report.py --metrics reports/metrics.json --out reports/final_report.md
 
 docker-up:
 	docker compose up -d
